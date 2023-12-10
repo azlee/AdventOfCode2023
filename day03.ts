@@ -21,6 +21,17 @@ function isAlphaNumeric(str: string) {
   return str >= "0" && str <= "9";
 }
 
+const dirs = [
+  [1, -1],
+  [1, 0],
+  [1, 1],
+  [-1, -1],
+  [-1, 0],
+  [-1, 1],
+  [0, 1],
+  [0, -1],
+];
+
 function getSumPart1() {
   const input = getInput();
   let sum = 0;
@@ -38,16 +49,6 @@ function getSumPart1() {
       if (numStr !== "") {
         // check surrounding area
         while (j2 < j) {
-          const dirs = [
-            [1, 1],
-            [1, -1],
-            [-1, -1],
-            [-1, 1],
-            [0, 1],
-            [0, -1],
-            [1, 0],
-            [-1, 0],
-          ];
           let foundSymbol = false;
           for (const dir of dirs) {
             const [row, col] = [i + dir[0], j2 + dir[1]];
@@ -77,4 +78,82 @@ function getSumPart1() {
   return sum;
 }
 
+function isInBounds(input, i, j) {
+  return i >= 0 && i < input.length && j >= 0 && j < input[0].length;
+}
+
+function getSurroundingNum(input: string[][], i: number, j: number): string {
+  let str = "";
+  let j2 = j;
+  if (isInBounds(input, i, j) && isAlphaNumeric(input[i][j])) {
+    str = input[i][j];
+  } else {
+    return str;
+  }
+  // go left
+  j--;
+  while (isInBounds(input, i, j) && isAlphaNumeric(input[i][j])) {
+    str = input[i][j] + str;
+    j--;
+  }
+  // go right
+  j2++;
+  while (isInBounds(input, i, j2) && isAlphaNumeric(input[i][j2])) {
+    str += input[i][j2];
+    j2++;
+  }
+  return str;
+}
+
+function getSumPart2() {
+  const input = getInput();
+  let sum = 0;
+  for (let i = 0; i < input.length; i++) {
+    for (let j = 0; j < input[0].length; j++) {
+      const char = input[i][j];
+      if (char === "*") {
+        const leftRightDirs = [
+          [0, 1],
+          [0, -1],
+        ];
+        const upDownDirs = [
+          [1, 0],
+          [-1, 0],
+        ];
+        const partNumbers: number[] = [];
+        for (const dir of upDownDirs) {
+          let [row, col] = [i + dir[0], j + dir[1]];
+          const surroundingNum = getSurroundingNum(input, row, col);
+          if (surroundingNum !== "") {
+            partNumbers.push(Number(surroundingNum));
+          } else {
+            // check left and right of up and down
+            for (const dir2 of leftRightDirs) {
+              let [row2, col2] = [row + dir2[0], col + dir2[1]];
+              const surroundingNum2 = getSurroundingNum(input, row2, col2);
+              if (surroundingNum2 !== "") {
+                partNumbers.push(Number(surroundingNum2));
+              }
+            }
+          }
+        }
+        // check left and right
+        for (const dir of leftRightDirs) {
+          let [row, col] = [i + dir[0], j + dir[1]];
+          const surroundingNum = getSurroundingNum(input, row, col);
+          if (surroundingNum !== "") {
+            partNumbers.push(Number(surroundingNum));
+          }
+        }
+        if (partNumbers.length === 2) {
+          // console.log("partNumbers", partNumbers);
+          sum += partNumbers[0] * partNumbers[1];
+        }
+      }
+    }
+  }
+  return sum;
+}
+
 console.log(getSumPart1());
+console.log(getSumPart2());
