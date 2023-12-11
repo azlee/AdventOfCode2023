@@ -2,9 +2,9 @@
 
 import * as fs from "fs";
 
-function getInput() {
+function getInput(isPart2: boolean) {
   const input = fs.readFileSync("day06.input", "utf8");
-  const times = input
+  let times = input
     .split("\n")[0]
     .split(":")[1]
     .trim()
@@ -12,7 +12,7 @@ function getInput() {
     .map((s) => s.trim())
     .filter((s) => s !== "")
     .map((s) => Number(s));
-  const distances = input
+  let distances = input
     .split("\n")[1]
     .split(":")[1]
     .trim()
@@ -20,6 +20,18 @@ function getInput() {
     .map((s) => s.trim())
     .filter((s) => s !== "")
     .map((s) => Number(s));
+  if (isPart2) {
+    let singleTime = "";
+    let singleDistance = "";
+    for (const time of times) {
+      singleTime += time;
+    }
+    for (const distance of distances) {
+      singleDistance += distance;
+    }
+    times = [Number(singleTime)];
+    distances = [Number(singleDistance)];
+  }
   const numWaysBeat = [];
   for (let i = 0; i < times.length; i++) {
     const time = times[i];
@@ -41,4 +53,5 @@ function getInput() {
   return product;
 }
 
-console.log(getInput());
+console.log(getInput(false));
+console.log(getInput(true));
