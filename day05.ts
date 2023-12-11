@@ -1,6 +1,7 @@
 // https://adventofcode.com/2023/day/5
 
 import * as fs from "fs";
+import * as path from "path";
 
 type SourceMapSegment = {
   destinationRangeStart: number;
@@ -53,14 +54,13 @@ function getInput(): MapInput {
   };
 }
 
-function getSoilNumbersPart1(): number {
-  const input = getInput();
+function getLowestSeedsLocation(seeds: number[], input: MapInput): number {
   const map: Map<string, Segment> = new Map();
   for (const segment of input.segments) {
     map.set(segment.source, segment);
   }
   let lowestLocationNumber = Number.MAX_SAFE_INTEGER;
-  for (const seed of input.seeds) {
+  for (const seed of seeds) {
     let currPos: number = seed;
     let key = "seed";
     while (key !== "location") {
@@ -88,4 +88,35 @@ function getSoilNumbersPart1(): number {
   return lowestLocationNumber;
 }
 
+function getSoilNumbersPart1(): number {
+  const input = getInput();
+  return getLowestSeedsLocation(input.seeds, input);
+}
+
+function getSoilNumbersPart2(): number {
+  // const input = getInput();
+  let minLocation = Number.MAX_SAFE_INTEGER;
+  const input = getInput();
+  const input2 = fs
+    .readFileSync(path.resolve(__dirname, "day05.input"), "utf8")
+    .split("\n\n");
+  const seedsArr = input2[0]
+    .split(": ")[1]
+    .split(" ")
+    .map((x) => parseInt(x))
+    .reduce((a, x, i) => {
+      if (i % 2 == 0) a.push([]);
+      return a[a.length - 1].push(x), a;
+    }, []);
+  for (const seed of seedsArr) {
+    console.log("on seed", seed);
+    for (let i = seed[0]; i < seed[0] + seed[1]; i++) {
+      const location = getLowestSeedsLocation([i], input);
+      minLocation = Math.min(minLocation, location);
+    }
+  }
+  return minLocation;
+}
+
 console.log(getSoilNumbersPart1());
+console.log(getSoilNumbersPart2());
