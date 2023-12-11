@@ -34,7 +34,6 @@ function getPoints(): number {
 
 function part2(): number {
   const input = fs.readFileSync("day04.input", "utf8");
-  let points = 0;
   const lines = input.split("\n");
   const copiesArray = Array(lines.length).fill(1);
   for (let i = 0; i < lines.length; i++) {
