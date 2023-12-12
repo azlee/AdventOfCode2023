@@ -26,12 +26,16 @@ function getInput(): Input {
   return { map, instructions };
 }
 
-function part1(): number {
+function getSteps(
+  input: Input,
+  startingPos: string,
+  endCondition: (string) => boolean
+): number {
   let steps = 0;
-  const { map, instructions } = getInput();
-  let currNode = map.get("AAA");
+  const { map, instructions } = input;
+  let currNode = map.get(startingPos);
   let instructionIndex = 0;
-  while (currNode.source !== "ZZZ") {
+  while (!endCondition(currNode.source)) {
     const dir = instructions[instructionIndex % instructions.length];
     if (dir === "L") {
       currNode = map.get(currNode.left);
@@ -44,4 +48,40 @@ function part1(): number {
   return steps;
 }
 
-console.log(part1());
+function part1(startingPos: string, endCondition: (string) => boolean): number {
+  return getSteps(getInput(), startingPos, endCondition);
+}
+
+function lcm(...numbers) {
+  return numbers.reduce((a, b) => (a * b) / gcd(a, b));
+}
+
+function gcd(...numbers) {
+  return numbers.reduce((a, b) => {
+    while (b) {
+      let t = b;
+      b = a % b;
+      a = t;
+    }
+    return a;
+  });
+}
+
+function part2(): number {
+  let steps = [];
+  const input = getInput();
+  const startingPositions: string[] = [];
+  for (const key of Array.from(input.map.keys())) {
+    if (key.endsWith("A")) {
+      startingPositions.push(key);
+    }
+  }
+  for (const pos of startingPositions) {
+    const stepsPos = getSteps(input, pos, (str: string) => str.endsWith("Z"));
+    steps.push(stepsPos);
+  }
+  return lcm(...steps);
+}
+
+// console.log(part1("11A", (str: string) => str === "11Z"));
+console.log(part2());
