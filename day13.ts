@@ -74,7 +74,6 @@ function part1() {
       const missymmetries = getNumberOfMissymetries(pattern, i, true);
       if (!missymmetries) {
         rowsNoMissymmetry.push(i);
-        foundPattern = true;
         break;
       }
     }
@@ -89,4 +88,40 @@ function part1() {
   return output;
 }
 
+function part2() {
+  const input = getInput();
+  const rowsWithOneMissymmetry = [];
+  const colsWithOneMissymmetry = [];
+  for (const pattern of input) {
+    let foundPattern = false;
+    for (let i = 1; i < pattern[0].length; i++) {
+      const missymmetries = getNumberOfMissymetries(pattern, i, false);
+      if (missymmetries === 1) {
+        colsWithOneMissymmetry.push(i);
+        foundPattern = true;
+        break;
+      }
+    }
+    if (foundPattern) continue;
+    // codey code code code, code code, codey code code, lolololololololol
+    for (let i = 1; i < pattern.length; i++) {
+      const missymmetries = getNumberOfMissymetries(pattern, i, true);
+      if (missymmetries === 1) {
+        rowsWithOneMissymmetry.push(i);
+        foundPattern = true;
+        break;
+      }
+    }
+  }
+  let output = 0;
+  for (const col of colsWithOneMissymmetry) {
+    output += col;
+  }
+  for (const row of rowsWithOneMissymmetry) {
+    output += 100 * row;
+  }
+  return output;
+}
+
 console.log(part1());
+console.log(part2());
