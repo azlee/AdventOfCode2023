@@ -16,15 +16,19 @@ type Input = {
   dir: number[];
 };
 
-function part1(): number {
+function getConfig(
+  startPos: number[],
+  startDir: number[],
+  overrideSeen?: Set<string>
+): number {
   const input = getInput();
   const queue: Input[] = [
     {
-      beamPosition: [0, 0],
-      dir: [0, 1],
+      beamPosition: startPos,
+      dir: startDir,
     },
   ];
-  const seen: Set<string> = new Set();
+  const seen: Set<string> = overrideSeen ?? new Set();
   const energizedPositions: Set<string> = new Set();
   while (queue.length) {
     const step = queue.pop();
@@ -101,4 +105,26 @@ function part1(): number {
   return energizedPositions.size;
 }
 
-console.log(part1());
+function part2() {
+  const input = getInput();
+  let maxTiles = 0;
+  const seen: Set<string> = new Set();
+  // top & bottom
+  for (let i = 0; i < input[0].length; i++) {
+    const tiles = getConfig([0, i], [1, 0]);
+    const bottom = getConfig([input.length - 1, i], [-1, 0]);
+    maxTiles = Math.max(tiles, maxTiles);
+    maxTiles = Math.max(bottom, maxTiles);
+  }
+  // left & right row
+  for (let i = 0; i < input.length; i++) {
+    const tiles = getConfig([i, 0], [0, 1]);
+    const rightTiles = getConfig([i, input[0].length - 1], [0, -1]);
+    maxTiles = Math.max(tiles, maxTiles);
+    maxTiles = Math.max(rightTiles, maxTiles);
+  }
+  return maxTiles;
+}
+
+console.log(getConfig([0, 0], [0, 1]));
+console.log(part2());
