@@ -51,7 +51,7 @@ function part(isPart1: boolean): any {
         pq.insert([hl + input[nr][nc], nr, nc, dr, dc, n + 1]);
       }
     }
-    if (isPart1 || "00" === [dr, dc].join("") || (n >= 4 && n < maxSteps)) {
+    if (isPart1 || "00" === [dr, dc].join("") || n >= 4) {
       for (const [ndr, ndc] of [
         [0, 1],
         [1, 0],
