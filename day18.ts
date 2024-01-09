@@ -18,17 +18,42 @@ function getVertices() {
   };
   const points = [];
   const vertices = [[0, 0]];
-  const pointSet = new Set();
   for (const line of input) {
     const [dir, steps, color] = line.split(" ");
     const delta = dirMap[dir];
     let numSteps = Number(steps);
-    while (numSteps > 0) {
-      currPoint = [currPoint[0] + delta[0], currPoint[1] + delta[1]];
-      points.push(currPoint);
-      pointSet.add(`${currPoint[0]}-${currPoint[1]}}`);
-      numSteps--;
-    }
+    currPoint = [
+      currPoint[0] + numSteps * delta[0],
+      currPoint[1] + numSteps * delta[1],
+    ];
+    points.push(currPoint);
+    vertices.push(currPoint);
+  }
+  return vertices;
+}
+
+function getVertices2() {
+  const input = getInput();
+  let currPoint = [0, 0];
+  const dirMap = {
+    "0": [0, -1],
+    "1": [1, 0],
+    "2": [0, 1],
+    "3": [-1, 0],
+  };
+  const points = [];
+  const vertices = [[0, 0]];
+  for (const line of input) {
+    let [_dir, _steps, color] = line.split(" ");
+    const dir = color.substring(7, 8);
+    const steps = Number.parseInt(color.substring(2, 7), 16);
+    const delta = dirMap[dir];
+    let numSteps = Number(steps);
+    currPoint = [
+      currPoint[0] + numSteps * delta[0],
+      currPoint[1] + numSteps * delta[1],
+    ];
+    points.push(currPoint);
     vertices.push(currPoint);
   }
   return vertices;
@@ -38,7 +63,12 @@ function part1(): number {
   const verticies = getVertices();
   return shoelace(verticies);
 }
+function part2(): number {
+  const verticies = getVertices2();
+  return shoelace(verticies);
+}
 console.log(part1());
+console.log(part2());
 
 // https://www.omnicalculator.com/math/irregular-polygon-area
 function shoelace(points: number[][]): number {
